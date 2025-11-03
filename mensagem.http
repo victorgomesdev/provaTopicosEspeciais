@@ -1,0 +1,32 @@
+# Definição de variáveis (ambiente "local" do REST Client)
+@base_url = https://silver-goggles-7j6j76gw59g3pw99-8080.app.github.dev
+@peer_url = https:bug-free-sniffle-pxr4pwwr7j4265rj-8080.app.github.dev
+
+###
+### 1) Verifica NTP local (útil para checar offset no servidor)
+GET {{ base_url }}/ntp
+Accept: application/json
+
+###
+### 2) Enviar mensagem para o colega usando o endpoint /send (inicia fluxo e grava evento "sent")
+POST {{ base_url }}/send
+Content-Type: application/json
+
+{
+  "target_url": "{{ peer_url }}",
+  "payload": "Olá, esta é uma mensagem de teste enviada via REST Client"
+}
+
+###
+### 3) Simular envio direto ao endpoint /message do colega (útil para testar recebimento sem passar por /send)
+POST {{ peer_url }}/message
+Content-Type: application/json
+
+{
+  "from_url": "{{ base_url }}",
+  "payload": "Mensagem direta simulada (envio manual ao /message)",
+  "origin_local_time": "2025-01-01T12:00:00+00:00",
+  "origin_ntp_time": "2025-01-01T12:00:05+00:00"
+}
+
+###
